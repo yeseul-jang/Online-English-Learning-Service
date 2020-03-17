@@ -1,0 +1,115 @@
+﻿@model User
+@{
+    ViewData["Title"] = "SignUp";
+}
+
+<h2>Sign Up</h2>
+
+<form asp-action="SignUp" asp-controller="Home" onsubmit="myFunction()" method="post" enctype="multipart/form-data">
+
+    <input type="hidden" asp-for="UserID" />
+    <div class="form-group">
+        <input id="radio_show" checked="checked" type="radio" asp-for="Type" value="Teacher" onclick="show2();" /> Teacher
+        <input id="radio_hide" type="radio" asp-for="Type" value="Student" onclick="show1();" /> Student
+    </div>
+
+    @await Html.PartialAsync("_UserPartialForm")
+
+
+    <div class="form-group">
+
+        <div id="div1" class="test">
+        
+            <label>Prefered Time:</label><br /><br />
+            <input type="checkbox" name="time[]" value="9:00 ~ 10:00">  9:00 ~ 10:00<br>
+            <input type="checkbox" name="time[]" value="10:00 ~ 11:00"> 10:00 ~ 11:00<br>
+            <input type="checkbox" name="time[]" value=" 11:00 ~ 12:00"> 11:00 ~ 12:00<br>
+            <input type="checkbox" name="time[]" value="12:00 ~ 13:00"> 12:00 ~ 13:00<br>
+            <input type="checkbox" name="time[]" value="13:00 ~ 14:00"> 13:00 ~ 14:00<br>
+            <input type="checkbox" name="time[]" value="14:00 ~ 15:00"> 14:00 ~ 15:00<br>
+            <input type="checkbox" name="time[]" value="15:00 ~ 16:00"> 15:00 ~ 16:00<br>
+            <input type="checkbox" name="time[]" value="16:00 ~ 17:00"> 16:00 ~ 17:00<br>
+            <input type="checkbox" name="time[]" value="17:00 ~ 18:00"> 17:00 ~ 18:00<br>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <div class="text-center">
+            <button class="btn btn-primary" type="submit"  onclick="return test_checkbox()">Save</button>
+            <a asp-action="SignIn" asp-controller="Home" class="btn btn-secondary">Cancel</a>
+        </div>
+    </div>
+
+</form>
+<script>
+    function myFunction() {
+        alert("You have signed up successfully!");
+    }
+    function show1() {
+        document.getElementById('div1').style.display = 'none';
+    }
+    function show2() {
+        document.getElementById('div1').style.display = 'block';
+    }
+    function test_checkbox() {
+        var list = new List();
+        var values = document.getElementsByName("time");
+        for (var i = 0; i < values.length; i++) {
+            if (values[i].checked) {
+                alert(values[i].value);
+                list.add[i];
+            }
+            flag = true;
+
+        }
+        
+        return flag;
+       
+    }
+
+    var IdentityPoolId = 'identity_pool_id';
+    var idKey = 'cognito-idp.ap-southeast-2.amazonaws.com/' + userPoolId;
+    var cognitoUser = userPool.getCurrentUser();
+    function setCredential() {
+
+        if (cognitoUser != null) {
+            cognitoUser.getSession(function (err, result) {
+                if (err) {
+                    console.log('Error in getSession()');
+                    console.error(err);
+                }
+                if (result) {
+                    console.log('User currently logged in.');
+                    AWS.config.update({
+                        region: bucketRegion,
+                        credentials: new AWS.CognitoIdentityCredentials({
+                            IdentityPoolId: IdentityPoolId,
+                            Logins: { [idKey]: result.getIdToken().getJwtToken() }
+                        })
+                    });
+                }
+            });
+        }
+    }
+    function uploadS3() {
+        var s3 = new AWS.S3({ params: { Bucket: bucketName } });
+        var files = document.getElementById('fileinput').files;
+        var params = {
+            Bucket: bucketName,
+            Key: file.name,
+            Body: file
+        };
+
+        s3.upload(params, function (err, data) {
+            if (err) {
+                console.log(err, err.stack);
+                showModal('Failed to upload', 'Network Error. Please contact admin.');
+            } else {
+                console.log(data.key + ' successfully uploaded to' + data.Location);
+                showModal('Upload Success!', data.key + ' successfully uploaded!');
+            }
+        });
+    }
+
+</script>

@@ -1,0 +1,179 @@
+﻿@model Appointment
+@{
+    ViewData["Title"] = "Appointment";
+}
+
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#deleteComment").click(function () {
+            var comment;
+            var type = @Html.Raw(Json.Serialize(ViewBag.type));
+
+            if (type == "Student"){
+                comment = document.getElementById("StudentComment");
+            }else {
+                comment = document.getElementById("TeacherComment");
+            }
+            comment.textContent = "";
+            comment.value = "";
+            comment.innerHTML = "";
+
+            alert("delete success ! ");
+
+        });
+    });
+</script>
+
+<style>
+    .center {
+        text-align: center;
+    }
+
+    .btnMiddle {
+        margin: auto;
+        display: block;
+        text-align: center;
+        padding: 10px;
+    }
+
+    .divCenter {
+        margin: auto;
+        width: 100%;
+        max-width: 450px;
+        padding: 10px;
+        font-size: 18px;
+    }
+</style>
+
+<h2 class="center">Save Appointment</h2>
+<br/>
+<!--
+emailID: @ViewBag.emailID <br/>
+type: @ViewBag.type
+-->
+
+<div class="divCenter">
+    <form id="returnBoard" asp-action="ReturnToAppointmentBoard">
+        <input type="hidden" name="userID" value="@ViewBag.userID" />
+        <input type="hidden" name="type" value="@ViewBag.type" />
+    </form>
+
+    <form id="returnList" asp-action="AppointmentList" method="get">
+        <input type="hidden" name="userId" value="@ViewBag.userID" />
+        <input type="hidden" name="emailId" value="@ViewBag.emailID" />
+        <input type="hidden" name="type" value="@ViewBag.type" />
+
+    </form>
+
+    <form id="saveForm" asp-action="SaveAppointment" method="post" class="form-horizontal">
+        <input type="hidden" name="userID" value="@ViewBag.userID" />
+        <input type="hidden" name="type" value="@ViewBag.type" />
+        <input asp-for="TeacherEmailID" value="@Model.TeacherEmailID" type="hidden" />
+        <input asp-for="AppointmentDate_TimeSlot" value="@Model.AppointmentDate_TimeSlot" type="hidden" />
+        <input asp-for="StudentEmailID" value="@Model.StudentEmailID" type="hidden" />
+        <input asp-for="StudentFullName" value="@Model.StudentFullName" type="hidden" />
+        <input asp-for="TeacherFullName" value="@Model.TeacherFullName" type="hidden" />
+        <input asp-for="Status" value="@Model.Status" type="hidden" />
+
+        <div class="form-group">
+            <label class="col-sm-5 control-label">Date and Time:</label>
+            <div class="col-sm-7">
+                <p class="form-control-static">@Model.AppointmentDate_TimeSlot</p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-5 control-label">Teacher:</label>
+            <div class="col-sm-7">
+                <p class="form-control-static">@Model.TeacherFullName</p>
+            </div>
+        </div>
+
+        @if (ViewBag.type == "Teacher")
+        {
+            <input asp-for="StudentComment" value="@Model.StudentComment" type="hidden" />
+            <input asp-for="Course" value="@Model.Course" type="hidden" />
+
+            <div class="form-group">
+                <label class="col-sm-5 control-label" for="StudentComment">Student Comment:</label>
+                <div class="col-sm-7">
+                    <textarea class="form-control" asp-for="StudentComment" id="StudentComment" rows="4" cols="50" disabled>
+                    </textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="TeacherComment" class="col-sm-5 control-label">Teacher Comment:</label>
+                <textarea class="form-control" asp-for="TeacherComment" id="TeacherComment" rows="4" cols="50">
+                </textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-5 control-label">Course:</label>
+                <div class="col-sm-7">
+                    <select class="form-control" asp-for="Course" disabled>
+                        <option>API Engineering & Cloud Comp</option>
+                        <option>Java EE Programming</option>
+                        <option>Software Development Project 1</option>
+                        <option>Bsns & Entrepreneurship</option>
+                        <option>Software Security</option>
+                        <option>Data Warehouse & Mining </option>
+                    </select>
+                </div>
+            </div>
+        }
+        else
+        {
+            <input asp-for="TeacherComment" value="@Model.TeacherComment" type="hidden" />
+
+            <div class="form-group">
+                <label class="col-sm-5 control-label" for="StudentComment">Student Comment:</label>
+                <div class="col-sm-7">
+                    <textarea class="form-control" asp-for="StudentComment" id="StudentComment" rows="4" cols="50">
+                    </textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="TeacherComment" class="col-sm-5 control-label">Teacher Comment:</label>
+                <div class="col-sm-7">
+                    <textarea class="form-control" asp-for="TeacherComment" id="TeacherComment" rows="4" cols="50" disabled>
+                    </textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-5 control-label">Course:</label>
+                <div class="col-sm-7">
+                    <select class="form-control" asp-for="Course">
+                        <option>API Engineering & Cloud Comp</option>
+                        <option>Java EE Programming</option>
+                        <option>Software Development Project 1</option>
+                        <option>Bsns & Entrepreneurship</option>
+                        <option>Software Security</option>
+                        <option>Data Warehouse & Mining </option>
+                    </select>
+                </div>
+            </div>
+        }
+
+        <br />
+
+        <div class="btnMiddle">
+            <button type="submit" class="btn btn-success">Save</button>
+            @if (ViewBag.flag == "Edit")
+            {
+                <button type="button" id="deleteComment" class="btn btn-warning">Delete Comment</button>
+                <button type="submit" form="returnList" class="btn btn-default">Appointment List</button>
+            }
+            else
+            {
+                <button type="button" form="returnBoard" class="btn-default">Appointment Board</button>
+            }
+        </div>
+    </form>
+    <br/>
+
+</div>

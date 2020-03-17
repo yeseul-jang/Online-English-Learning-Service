@@ -1,0 +1,43 @@
+﻿@model User
+@{
+    ViewData["Title"] = "SignIn";
+}
+<style>
+    .center {
+        text-align: center;
+    }
+
+    .divCenter {
+        margin: auto;
+        width: 100%;
+        max-width: 400px;
+        padding: 10px;
+        font-size: 18px;
+    }
+</style>
+<form asp-action="SignIn" method="post" class="divCenter">
+    <div class="center">
+        <h1>Please Log In !</h1><br />
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" asp-for="Type" type="radio" name="type" value="Teacher" id="type" />
+            <label class="form-check-label" for="type">Teacher</label>
+            <input class="form-check-input" asp-for="Type" type="radio" name="type" value="Student" id="type" />
+            <label class="form-check-label" for="type">Student</label>
+        </div>
+    </div>
+    <br />
+    <div class="form-group">
+        <label for="email">Email address</label>
+        <input asp-for="EmailID" type="email" name="emailID" placeholder="Email Address" class="form-control" id="email" required autofocus>
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input asp-for="Password" type="password" name="password" placeholder="Password" class="form-control" id="password" required>
+    </div>
+
+    <button type="submit" class="btn btn-lg btn-primary btn-block" value="Sign In">Sign In</button>
+
+    <a asp-action="SignUp" asp-controller="Home" class="btn btn-lg btn-default btn-block">SignUp</a>
+
+</form>

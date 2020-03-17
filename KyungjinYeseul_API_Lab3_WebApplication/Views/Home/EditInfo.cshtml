@@ -1,0 +1,127 @@
+﻿@model User
+@{
+    ViewData["Title"] = "EditInfo";
+}
+
+
+<head>
+    <script src="~/js/site.js"></script>
+</head>
+<style>
+    .center{
+        text-align:center;
+    }
+</style>
+
+<h2 class="center">Edit Infomation</h2>
+<br/>
+
+<form asp-route-userID="@Model.UserID" asp-action="EditInfo" asp-controller="Home" onsubmit="myFunction()" method="post" enctype="multipart/form-data">
+
+    <input type="hidden" asp-for="UserID" />
+
+
+    <div class="form-group">
+
+        <input id="radio_show" checked="checked" type="radio" asp-for="Type" value="@Model.Type" onclick="show2();" /> @Model.Type
+        <br/><br/>
+
+        @await Html.PartialAsync("_UserPartialForm")
+
+        @if (Model.Type == "Teacher")
+        {
+            <div class="form-group">
+
+                <div id="div1" class="test">
+                    <label>Resume:</label>
+                    <input type="file" name="file" /><br /><br />
+
+
+                    <label>Prefered Time:</label><br /><br />
+                    <input id="yes" type="checkbox" name="time[]" value="9:00 ~ 10:00">  9:00 ~ 10:00<br>
+                    <input id="yes1" type="checkbox" name="time[]" value="10:00 ~ 11:00"> 10:00 ~ 11:00<br>
+                    <input id="yes2" type="checkbox" name="time[]" value="11:00 ~ 12:00"> 11:00 ~ 12:00<br>
+                    <input id="yes3" type="checkbox" name="time[]" value="12:00 ~ 13:00"> 12:00 ~ 13:00<br>
+                    <input id="yes4" type="checkbox" name="time[]" value="13:00 ~ 14:00"> 13:00 ~ 14:00<br>
+                    <input id="yes5" type="checkbox" name="time[]" value="14:00 ~ 15:00"> 14:00 ~ 15:00<br>
+                    <input id="yes6" type="checkbox" name="time[]" value="15:00 ~ 16:00"> 15:00 ~ 16:00<br>
+                    <input id="yes7" type="checkbox" name="time[]" value="16:00 ~ 17:00"> 16:00 ~ 17:00<br>
+                    <input id="yes8" type="checkbox" name="time[]" value="17:00 ~ 18:00"> 17:00 ~ 18:00<br>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="form-group">
+        <div class="text-center">
+            <button class="btn btn-primary" type="submit" onclick="return test_checkbox()">Save</button>
+            <a asp-action="SignIn" asp-controller="Home" class="btn btn-secondary">Cancel</a>
+        </div>
+    </div>
+
+</form>
+<script>
+
+    var stringArray = @Html.Raw(Json.Serialize(ViewBag.items));
+    for (i = 0; i < stringArray.length; i++) {
+        if (stringArray[i] == document.getElementById("yes").value) {
+            yes.checked = true;
+        }
+        if (stringArray[i] == document.getElementById("yes1").value) {
+            yes1.checked = true;
+        }
+        if (stringArray[i] == document.getElementById("yes2").value) {
+            yes2.checked = true;
+        }
+        if (stringArray[i] == document.getElementById("yes3").value) {
+            yes3.checked = true;
+        }
+        if (stringArray[i] == document.getElementById("yes4").value) {
+            yes4.checked = true;
+        }
+        if (stringArray[i] == document.getElementById("yes5").value) {
+            yes5.checked = true;
+        }
+        if (stringArray[i] == document.getElementById("yes6").value) {
+            yes6.checked = true;
+        }
+        if (stringArray[i] == document.getElementById("yes7").value) {
+            yes7.checked = true;
+        }
+        if (stringArray[i] == document.getElementById("yes8").value) {
+            yes8.checked = true;
+        }
+    }
+    function myFunction() {
+        alert("Your infomations have changed successfully!");
+    }
+
+    function show1() {
+        document.getElementById('div1').style.display = 'none';
+    }
+    function show2() {
+        document.getElementById('div1').style.display = 'block';
+    }
+    function test_checkbox() {
+        var list = new List();
+        var values = document.getElementsByName("time");
+        for (var i = 0; i < values.length; i++) {
+            if (values[i].checked) {
+                alert(values[i].value);
+                list.add[i];
+            }
+            flag = true;
+
+        }
+        return flag;
+    }
+
+    function checkedbox() {
+        var array = '@ViewBag.lists';
+
+        for (i = 0; i < array.length; i++) {
+            var contratocod = array[i].contratocod;
+        }
+
+    }
+</script>

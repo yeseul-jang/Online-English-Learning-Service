@@ -1,0 +1,278 @@
+﻿@model IEnumerable<User>
+@{
+    ViewData["Title"] = "AppointmentBoard";
+}
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        // set date from tomorrow
+        var today = new Date();
+        var dd = today.getDate() + 1;
+        var mm = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+
+        var tomorrow = yyyy + '-' + mm + '-' + dd;
+        document.getElementById("appointmentDate").setAttribute("min", tomorrow);
+
+
+        $(".timeSlot").click(function () {
+            var appointmentDate = $("#appointmentDate");
+            var teacherEmailID = $("#teacherEmailID");
+            var appointmentDate_timeSlot = $("#appointmentDate_timeSlot");
+            var teacherFullName = $("#teacherFullName");
+            var appointmentForm = $("#appointmentForm");
+
+            if ($("#appointmentDate").val() == "") {
+                alert("Please select date first !");
+            } else {
+                appointmentDate_timeSlot.val(appointmentDate.val() + "_" + $(this).attr("timeSlotValue"));
+                teacherEmailID.val($(this).attr("teacherEmailID"));
+                teacherFullName.val($(this).attr("teacherFullName"));
+
+                //alert("success ! ");
+                appointmentForm.submit();
+            }
+        });
+
+        $("#appointmentDate").change(function () {
+            $("#setDateForm").submit();
+        })
+    });
+</script>
+<script src="~/js/site.js"></script>
+
+<style>
+    .center{
+        text-align:center;
+    }
+    #btnMiddle {
+        margin:auto;
+        display:block;
+    }
+</style>
+
+<!--@ViewBag.userID / @ViewBag.studentFullName / @ViewBag.type / @ViewBag.emailID-->
+
+<div class="container">
+    <h2 class="center">AppointmentBoard</h2>
+
+    <br />
+    
+    <form id="setDateForm" asp-action="SetDate" method="get" class="form">
+        <div class="form-group">
+            <label for="appointmentDate">Date : </label>
+            <input class="form-control" type="date" id="appointmentDate" name="appointmentDate" value="@ViewBag.date" />
+        </div>
+        <input type="hidden" id="userID" name="userID" value="@ViewBag.userID" />
+        <input type="hidden" id="type" name="type" value="@ViewBag.type" />
+    </form>
+
+    <br />
+
+    <form id="appointmentForm" asp-action="Appointment" method="post">
+        <input type="hidden" id="userID" name="userID" value="@ViewBag.userID" />
+        <input type="hidden" id="teacherEmailID" name="teacherEmailID" value="" />
+        <input type="hidden" id="appointmentDate_timeSlot" name="appointmentDate_timeSlot" value="" />
+        <input type="hidden" id="studentEmailID" name="studentEmailID" value="@ViewBag.emailID" />
+        <input type="hidden" id="studentFullName" name="studentFullName" value="@ViewBag.studentFullName" />
+        <input type="hidden" id="teacherFullName" name="teacherFullName" value="" />
+        <input type="hidden" id="type" name="type" value="@ViewBag.type" />
+        <input type="hidden" id="emailID" name="emailID" value="@ViewBag.emailID" />
+
+        <table class="table table-borderless">
+            <thead>
+                <tr>
+                    <th scope="col">Teacher</th>
+                    <th scope="col">9:00~10:00</th>
+                    <th scope="col">10:00~11:00</th>
+                    <th scope="col">11:00~12:00</th>
+                    <th scope="col">12:00~13:00</th>
+                    <th scope="col">13:00~14:00</th>
+                    <th scope="col">14:00~15:00</th>
+                    <th scope="col">15:00~16:00</th>
+                    <th scope="col">16:00~17:00</th>
+                    <th scope="col">17:00~18:00</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (User u in Model)
+                {
+                    <tr>
+                        <td scope="row">@u.FirstName @u.LastName</td>
+
+                        @if (ViewBag.date != null)
+                        {
+                            if (u.TimeSlots.Where(t => t.StrTimeSlot == "9:00 ~ 10:00").Count() != 0)
+                            {
+                                if (u.TimeSlots.Where(t => t.StrTimeSlot == "9:00 ~ 10:00").First().isBooked(u.EmailID, ViewBag.date))
+                                {
+                                    <td style="background-color:blue"></td>
+                                }
+                                else
+                                {
+                                    <td style="background-color:greenyellow" class="timeSlot" timeSlotValue="9:00 ~ 10:00" teacherEmailID="@u.EmailID" teacherFullName="@u.FirstName @u.LastName"></td>
+                                }
+                            }
+                            else
+                            {
+                                <td style="background-color:gray"></td>
+                            }
+
+                            if (u.TimeSlots.Where(t => t.StrTimeSlot == "10:00 ~ 11:00").Count() != 0)
+                            {
+                                if (u.TimeSlots.Where(t => t.StrTimeSlot == "10:00 ~ 11:00").First().isBooked(u.EmailID, ViewBag.date))
+                                {
+                                    <td style="background-color:blue"></td>
+                                }
+                                else
+                                {
+                                    <td style="background-color:greenyellow" class="timeSlot" timeSlotValue="10:00 ~ 11:00" teacherEmailID="@u.EmailID" teacherFullName="@u.FirstName @u.LastName"></td>
+                                }
+                            }
+                            else
+                            {
+                                <td style="background-color:gray"></td>
+                            }
+
+                            if (u.TimeSlots.Where(t => t.StrTimeSlot == "11:00 ~ 12:00").Count() != 0)
+                            {
+                                if (u.TimeSlots.Where(t => t.StrTimeSlot == "11:00 ~ 12:00").First().isBooked(u.EmailID, ViewBag.date))
+                                {
+                                    <td style="background-color:blue"></td>
+                                }
+                                else
+                                {
+                                    <td style="background-color:greenyellow" class="timeSlot" timeSlotValue="11:00 ~ 12:00" teacherEmailID="@u.EmailID" teacherFullName="@u.FirstName @u.LastName"></td>
+                                }
+                            }
+                            else
+                            {
+                                <td style="background-color:gray"></td>
+                            }
+
+                            if (u.TimeSlots.Where(t => t.StrTimeSlot == "12:00 ~ 13:00").Count() != 0)
+                            {
+                                if (u.TimeSlots.Where(t => t.StrTimeSlot == "12:00 ~ 13:00").First().isBooked(u.EmailID, ViewBag.date))
+                                {
+                                    <td style="background-color:blue"></td>
+                                }
+                                else
+                                {
+                                    <td style="background-color:greenyellow" class="timeSlot" timeSlotValue="12:00 ~ 13:00" teacherEmailID="@u.EmailID" teacherFullName="@u.FirstName @u.LastName"></td>
+                                }
+                            }
+                            else
+                            {
+                                <td style="background-color:gray"></td>
+                            }
+
+                            if (u.TimeSlots.Where(t => t.StrTimeSlot == "13:00 ~ 14:00").Count() != 0)
+                            {
+                                if (u.TimeSlots.Where(t => t.StrTimeSlot == "13:00 ~ 14:00").First().isBooked(u.EmailID, ViewBag.date))
+                                {
+                                    <td style="background-color:blue"></td>
+                                }
+                                else
+                                {
+                                    <td style="background-color:greenyellow" class="timeSlot" timeSlotValue="13:00 ~ 14:00" teacherEmailID="@u.EmailID" teacherFullName="@u.FirstName @u.LastName"></td>
+                                }
+                            }
+                            else
+                            {
+                                <td style="background-color:gray"></td>
+                            }
+
+                            if (u.TimeSlots.Where(t => t.StrTimeSlot == "14:00 ~ 15:00").Count() != 0)
+                            {
+                                if (u.TimeSlots.Where(t => t.StrTimeSlot == "14:00 ~ 15:00").First().isBooked(u.EmailID, ViewBag.date))
+                                {
+                                    <td style="background-color:blue"></td>
+                                }
+                                else
+                                {
+                                    <td style="background-color:greenyellow" class="timeSlot" timeSlotValue="14:00 ~ 15:00" teacherEmailID="@u.EmailID" teacherFullName="@u.FirstName @u.LastName"></td>
+                                }
+                            }
+                            else
+                            {
+                                <td style="background-color:gray"></td>
+                            }
+
+                            if (u.TimeSlots.Where(t => t.StrTimeSlot == "15:00 ~ 16:00").Count() != 0)
+                            {
+                                if (u.TimeSlots.Where(t => t.StrTimeSlot == "15:00 ~ 16:00").First().isBooked(u.EmailID, ViewBag.date))
+                                {
+                                    <td style="background-color:blue"></td>
+                                }
+                                else
+                                {
+                                    <td style="background-color:greenyellow" class="timeSlot" timeSlotValue="15:00 ~ 16:00" teacherEmailID="@u.EmailID" teacherFullName="@u.FirstName @u.LastName"></td>
+                                }
+                            }
+                            else
+                            {
+                                <td style="background-color:gray"></td>
+                            }
+
+
+                            if (u.TimeSlots.Where(t => t.StrTimeSlot == "16:00 ~ 17:00").Count() != 0)
+                            {
+                                if (u.TimeSlots.Where(t => t.StrTimeSlot == "16:00 ~ 17:00").First().isBooked(u.EmailID, ViewBag.date))
+                                {
+                                    <td style="background-color:blue"></td>
+                                }
+                                else
+                                {
+                                    <td style="background-color:greenyellow" class="timeSlot" timeSlotValue="16:00 ~ 17:00" teacherEmailID="@u.EmailID" teacherFullName="@u.FirstName @u.LastName"></td>
+                                }
+                            }
+                            else
+                            {
+                                <td style="background-color:gray"></td>
+                            }
+
+                            if (u.TimeSlots.Where(t => t.StrTimeSlot == "17:00 ~ 18:00").Count() != 0)
+                            {
+                                if (u.TimeSlots.Where(t => t.StrTimeSlot == "17:00 ~ 18:00").First().isBooked(u.EmailID, ViewBag.date))
+                                {
+                                    <td style="background-color:blue"></td>
+                                }
+                                else
+                                {
+                                    <td style="background-color:greenyellow" class="timeSlot" timeSlotValue="17:00 ~ 18:00" teacherEmailID="@u.EmailID" teacherFullName="@u.FirstName @u.LastName"></td>
+                                }
+                            }
+                            else
+                            {
+                                <td style="background-color:gray" id="timeSlot"></td>
+                            }
+                        }
+                        else
+                        {
+                            for (int i = 0; i < 9; i++)
+                            {
+                                <td style="background-color:gray" id="timeSlot"></td>
+                            }
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<br /><br /><br />
+
+<form asp-action="AppointmentList" method="get">
+    <input type="hidden" name="emailId" value="@ViewBag.emailID" />
+    <input type="hidden" name="userId" value="@ViewBag.userID" />
+    <input type="hidden" name="type" value="@ViewBag.type" />
+    <button type="submit" class="btn btn-default" id="btnMiddle">Appointment List</button>
+</form>

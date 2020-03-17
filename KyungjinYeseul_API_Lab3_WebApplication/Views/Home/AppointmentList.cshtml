@@ -1,0 +1,86 @@
+﻿@model IEnumerable<Appointment>
+@{
+    ViewData["Title"] = "AppointmentList";
+}
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".cancelButton").click(function () {
+            var answer = confirm("Do you want to cancel this appointment?");
+            if (answer) {
+                // cancel
+                //alert("send Cancel from !")
+                $("#cancelForm").submit();
+            } else {
+                // no change
+                alert("no change!");
+            }
+        });
+    });
+</script>
+
+<style>
+    .center {
+        text-align:center;
+    }
+
+    #btnMiddle {
+        margin: auto;
+        display: block;
+    }
+</style>
+
+<h2 class="center">Appointment List</h2>
+<!-- userId: @ViewBag.userID / type: @ViewBag.type / emailID: @ViewBag.emailID -->
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Course</th>
+            <th>Teacher</th>
+            <th>Status</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Appointment a in Model)
+        {
+            var date = @a.AppointmentDate_TimeSlot.Split("_")[0];
+            var time = @a.AppointmentDate_TimeSlot.Split("_")[1];
+            <tr>
+                <td>@date</td>
+                <td>@time</td>
+                <td>@a.Course</td>
+                <td>@a.TeacherFullName</td>
+                <td>@a.Status</td>
+                <td>
+                    @if (a.Status == "made")
+                    {
+                    <form id="cancelForm" asp-action="CancelAppointment">
+                        <input type="hidden" name="teacherEmailID" value="@a.TeacherEmailID" />
+                        <input type="hidden" name="appointmentDate_timeSlot" value="@a.AppointmentDate_TimeSlot" />
+                        <input type="hidden" name="emailId" value="@ViewBag.emailID" />
+                        <input type="hidden" name="userId" value="@ViewBag.userID" />
+                        <input type="hidden" name="type" value="@ViewBag.type" />
+
+                        <button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("Appointment", new { teacherEmailID = a.TeacherEmailID, appointmentDate_timeSlot = a.AppointmentDate_TimeSlot, userID = ViewBag.userID, type=ViewBag.type })'">Edit Coment</button>
+
+                        @if (ViewBag.type == "Student")
+                        {
+                            <button type="button" class="cancelButton btn btn-danger">Cancel Appointment</button>
+                        }
+                    </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (ViewBag.type == "Student")
+{
+    <button type="button" class="btn btn-default" id="btnMiddle" onclick="location.href='@Url.Action("ReturnToAppointmentBoard", new { userID = ViewBag.userID, type=ViewBag.type })'">Appointment Board</button>
+}
